@@ -1,3 +1,8 @@
+## TODO Projet IoT
+
+* Lier les infos du GPS et du capteur cardiaque
+
+
 # 🚘 Car GPS tracker with TTGO-T-Beam
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/30px-Flag_of_Slovakia.svg.png) ![](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/30px-Flag_of_the_Czech_Republic.svg.png)
 ### ESP32 + GPS + LoRa + GSM <sup>(optional)</sup>
