@@ -21,7 +21,8 @@
 
 CayenneLPP lpp(51); // here we will construct Cayenne Low Power Payload (LPP) - see https://community.mydevices.com/t/cayenne-lpp-2-0/7510
 gps gps; // class that is encapsulating additional GPS functionality
-Adafruit_BME280 bme(I2C_SDA, I2C_SCL); // these pins are defined above
+Adafruit_BME280 bme; 
+//Adafruit_BME280 bme(I2C_SDA, I2C_SCL); // these pins are defined above
 
 double lat, lon, alt, kmph; // GPS data are saved here: Latitude, Longitude, Altitude, Speed in km/h
 float tmp, hum, pressure, alt_barometric; // BME280 data are saved here: Temperature, Humidity, Pressure, Altitude calculated from atmospheric pressure
@@ -45,7 +46,7 @@ void do_send(osjob_t* j); // declaration of send function
 
 // Schedule TX every this many seconds (might become longer due to duty cycle limitations).
 #ifdef DEBUG
-const unsigned int TX_INTERVAL = 480;
+const unsigned int TX_INTERVAL = 60;
 #elif
 const unsigned int TX_INTERVAL = 120;
 #endif
@@ -189,7 +190,8 @@ void do_send(osjob_t* j) {
   }
   else
   { 
-    if (gps.checkGpsFix())
+    //if (gps.checkGpsFix())
+    if (true)
     {
       // Prepare upstream data transmission at the next possible time.
       gps.getLatLon(&lat, &lon, &alt, &kmph, &sats);
@@ -197,16 +199,8 @@ void do_send(osjob_t* j) {
       // we have all the data that we need, let's construct LPP packet for Cayenne
       lpp.reset();
       lpp.addGPS(1, lat, lon, alt);
-      lpp.addTemperature(2, tmp);
-      lpp.addRelativeHumidity(3, hum);
-      lpp.addBarometricPressure(4, pressure);
-      lpp.addAnalogInput(5, vBat);
-      // optional: send current speed, satellite count, altitude from barometric sensor and battery voltage
-      //lpp.addAnalogInput(6, kmph);
-      lpp.addAnalogInput(7, sats);
-      //lpp.addAnalogInput(8, alt_barometric);
-      
-      
+      lpp.addTemperature(2, 30);
+
       // read LPP packet bytes, write them to FIFO buffer of the LoRa module, queue packet to send to TTN
       LMIC_setTxData2(1, lpp.getBuffer(), lpp.getSize(), 0);
       
@@ -228,15 +222,15 @@ void setup() {
   Serial.println(F("LoRa & GSM based TTN car tracker"));
 
   // set battery measurement pin
-  adcAttachPin(BATTERY_PIN);
-  adcStart(BATTERY_PIN);
+  // adcAttachPin(BATTERY_PIN);
+  // adcStart(BATTERY_PIN);
   analogReadResolution(10); // Default of 12 is not very linear. Recommended to use 10 or 11 depending on needed resolution.
   
   //Turn off WiFi and Bluetooth
   WiFi.mode(WIFI_OFF);
   btStop();
   
-  gps.init();
+  //gps.init();
 
   status = bme.begin(BME280_ADDRESS);
   
